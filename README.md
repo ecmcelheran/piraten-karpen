@@ -1,7 +1,7 @@
 # A1 - Piraten Karpen
 
-  * Author: < You name here >
-  * Email: < Your email here >
+  * Author: Emily McElheran
+  * Email: mcelhere@mcmaster.ca
 
 ## Build and Execution
 
