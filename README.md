@@ -32,9 +32,9 @@ Remark: **We are assuming here you are using a _real_ shell (e.g., anything but 
 | YES   | F01 | Roll a dice |  S | 01/01/23 |  |
 | YES   | F02 | Roll eight dices  |  S | 01/12/23  |
 | x   | F03 | Select how many games as command-line arg.  |  P  |   |
-| YES   | F04 | End of game with three skulls | S | |
-| YES   | F06 | Player keeping random dice at their turn | B (F02) | | 
+| YES   | F04 | End of game with three skulls | S | 01/12/23 |  |
+| YES   | F06 | Player keeping random dice at their turn | B (F02) | 01/16/2023|  | 
 | YES   | F07 | Score points: diamonds and coins | B (F04) | | 
 | x   | F08 | Score points: 3-of-a-kind | B (F04) | | 
-| ... | ... | ... |
+| x   | F09 | Implement Card Draw | B | |
 
