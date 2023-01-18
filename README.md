@@ -29,8 +29,8 @@ Remark: **We are assuming here you are using a _real_ shell (e.g., anything but 
 
 | MVP? | Id  | Feature  | Status  |  Started  | Delivered |
 | :-:  |:-:  |---       | :-:     | :-:       | :-:       |
-| YES   | F01 | Roll a dice |  S | 01/01/23 |  |
-| YES   | F02 | Roll eight dices  |  S | 01/12/23  |
+| YES   | F01 | Roll a dice |  S | 01/01/23 | 01/18/23 |
+| YES   | F02 | Roll eight dices  |  S | 01/12/23  | 01/18/23 |
 | x   | F03 | Select how many games as command-line arg.  |  P  |   |
 | YES   | F04 | End of turn with three skulls | S | 01/12/23 |  |
 | YES   | F05 | End of game when player reaches 6000 points| S | |
