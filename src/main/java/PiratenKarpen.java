@@ -34,14 +34,14 @@ public class PiratenKarpen {
         Player winner;
 
         //game ends when a player reaches 6000 points, all other players get another turn
-        while(player1.score<6000 && player2.score<6000){
+        while(player1.getScore()<6000 && player2.getScore()<6000){
             System.out.println("PLAYER 1\n");
             turn(player1);
             System.out.println();
             System.out.println("PLAYER 2\n");
             turn(player2);
 
-            System.out.println("\nPlayer 1 score: " + player1.score + "\nPlayer 2 score: " + player2.score + "\n\n");
+            System.out.println("\nPlayer 1 score: " + player1.getScore() + "\nPlayer 2 score: " + player2.getScore() + "\n\n");
         }
 
         if(player1.score>player2.score){
