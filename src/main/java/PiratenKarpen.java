@@ -106,6 +106,17 @@ public class PiratenKarpen {
                 }
             }
         }
+
+        for(int i=0; i<val.length; i++){
+            if(val[i]==Faces.GOLD){
+                player.gold++;
+            }
+            else if(val[i]==Faces.DIAMOND){
+                player.diamonds++;
+            }
+        }
+
+        player.setScore();
     }
 
     public static Faces[] reroll(Dice[] dicearr, Faces[] val, int... dice){
