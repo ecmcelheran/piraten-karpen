@@ -72,6 +72,46 @@ public class PiratenKarpen {
                 skulls+=1;
             }
         }
-    
+
+        //continue playing until 3 skulls rolled
+        while(skulls<3){
+            skulls = 0;
+            Random rand = new Random();
+            //randomly select 2 unique die values to roll again
+            int num1 = (rand.nextInt(6)+1);
+            int num2 = (rand.nextInt(6)+1);
+
+            //rolls cannot be skulls
+            while(val[num1]==Faces.SKULL){
+                num1 = (rand.nextInt(6)+1);
+            }
+            //rolls also cannot be the same die
+            while(val[num2]==Faces.SKULL || num2==num1){
+                num2 = (rand.nextInt(6)+1);
+            }
+
+            val = reroll(mydice, val, num1, num2);
+
+            //reprint dice values
+            for(int i=0; i<val.length; i++){
+                System.out.print(val[i] + "\t");
+            }
+            System.out.println("\n");
+            //System.out.println("You rolled..." + val[num1] + " and " + val[num2]);
+
+            //traverse die to check for skulls
+            for(int i=0; i<val.length; i++){
+                if(val[i]==Faces.SKULL){
+                    skulls+=1;
+                }
+            }
+        }
+    }
+
+    public static Faces[] reroll(Dice[] dicearr, Faces[] val, int... dice){
+        for(int i=0;i<dice.length;i++){
+            val[dice[i]]=dicearr[dice[i]].roll();
+        }
+        return val;
     }
 }
