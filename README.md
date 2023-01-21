@@ -36,6 +36,7 @@ Remark: **We are assuming here you are using a _real_ shell (e.g., anything but 
 | YES   | F05 | End of game when player reaches 6000 points| S | |
 | YES   | F06 | Player keeping random dice at their turn | B (F02) | 01/16/2023|  | 
 | YES   | F07 | Score points: diamonds and coins | B (F04) | | 
-| x   | F08 | Score points: 3-of-a-kind | B (F04) | | 
-| x   | F09 | Implement Card Draw | B | |
+| YES   | F08 | Track percentage of wins of each player | S | 01/15/23 |  |
+| x   | F09 | Score points: 3-of-a-kind | B (F04) | | 
+| x   | F10 | Implement Card Draw | P | |
 
