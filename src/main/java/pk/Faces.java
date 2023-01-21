@@ -1,6 +1,8 @@
 package pk;
 
 public enum Faces {
-    MONKEY, PARROT, GOLD, DIAMOND, SABER, SKULL
+    Monkey, Parrot, Gold, Diamond, Saber, Skull;
+
 }
+
 

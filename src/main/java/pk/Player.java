@@ -3,7 +3,7 @@ package pk;
 import java.util.Random;
 
 public class Player {
-    public int score, gold, diamonds;
+    int score, gold, diamonds;
     public Player(){
         score=0;
         gold=0;
@@ -16,20 +16,11 @@ public class Player {
         diamonds=0;
     }
 
-    public void addGold() {
-        gold++;
-    }
-
-    public void addDiamonds(){
-        diamonds++;
-    }
-
     public void setScore(){
         score = (gold+diamonds)*100;
     }
 
     public int getScore(){
-
         return score;
     }
 
@@ -39,7 +30,7 @@ public class Player {
             mydice[i] = new Dice();
             mydice[i].roll();
             System.out.print(mydice[i].val + "\t");
-            if(mydice[i].val==Faces.SKULL){
+            if(mydice[i].val==Faces.Skull){
                 skulls+=1;
             }
         }
@@ -69,7 +60,7 @@ public class Player {
 
             //traverse die to check for skulls
             for (Dice die : mydice) {
-                if (die.val == Faces.SKULL) {
+                if (die.val == Faces.Skull) {
                     skulls += 1;
                 }
             }
@@ -80,9 +71,9 @@ public class Player {
 
     public void updateScore(Dice[] mydice){
         for (Dice die : mydice) {
-            if (die.val == Faces.GOLD) {
+            if (die.val == Faces.Gold) {
                 gold++;
-            } else if (die.val == Faces.DIAMOND) {
+            } else if (die.val == Faces.Diamond) {
                 diamonds++;
             }
         }
@@ -99,11 +90,11 @@ public class Player {
         }
 
         //rolls cannot be skulls
-        while(mydice[num[0]].val==Faces.SKULL){
+        while(mydice[num[0]].val==Faces.Skull){
             num[0] = (rand.nextInt(6)+1);
         }
         //rolls also cannot be the same die
-        while(mydice[num[1]].val==Faces.SKULL || num[1]==num[0]){
+        while(mydice[num[1]].val==Faces.Skull || num[1]==num[0]){
             num[1] = (rand.nextInt(6)+1);
         }
 

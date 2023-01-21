@@ -3,6 +3,7 @@ package pk;
 public class Simulation {
     int[] wins = {0,0};
     Player[] player = new Player[2];
+    //game comes with 8 dice
     Dice[] mydice = new Dice[8];
 
     int games;
