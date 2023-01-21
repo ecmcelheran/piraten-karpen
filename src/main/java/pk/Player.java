@@ -3,13 +3,17 @@ package pk;
 import java.util.Random;
 
 public class Player {
-
-    int score, gold, diamonds, wins;
+    public int score, gold, diamonds;
     public Player(){
         score=0;
         gold=0;
         diamonds=0;
-        wins=0;
+    }
+
+    public void reset(){
+        score=0;
+        gold=0;
+        diamonds=0;
     }
 
     public void addGold() {
@@ -24,98 +28,89 @@ public class Player {
         score = (gold+diamonds)*100;
     }
 
-    public int getCoins(){
-        return gold;
-    }
-
-    public int getDiamonds(){
-        return diamonds;
-    }
-
     public int getScore(){
 
         return score;
     }
-    public void addWin(){
-        wins++;
-    }
-    public int getWins(){
-        return wins;
-    }
 
-    public void playTurn(){
-        Random rand = new Random();
-        int skulls=0,points=0,gold=0,diamond=0;
-        Faces[] val = new Faces[8];
-        int c= rand.nextInt(2);
-
-        //need 8 separate dice
-        Dice[] mydice = new Dice[8];
-
-        System.out.println("You rolled:");
-
-        //initialize and roll all 8 die and record values
+    public static int rollAll(Dice[] mydice){
+        int skulls =0;
         for(int i=0; i<8; i++){
             mydice[i] = new Dice();
-            val[i] = mydice[i].roll();
-            System.out.print(val[i] + "\t");
-            if(val[i]==Faces.SKULL){
+            mydice[i].roll();
+            System.out.print(mydice[i].val + "\t");
+            if(mydice[i].val==Faces.SKULL){
                 skulls+=1;
             }
         }
+        System.out.println();
+        return skulls;
+    }
 
-        //continue playing until 3 skulls rolled, or player chooses to stop rolling
-        while(skulls<3 && c==1){
+    public void playTurn(Dice[] mydice){
+        Random rand = new Random();
+        int skulls=0;
+
+        System.out.println("You rolled:");
+        skulls=rollAll(mydice);
+
+        //continue playing until 3 skulls rolled
+        while(skulls<3){
             skulls = 0;
-            //randomly select 2 unique die values to roll again
-            int num1 = (rand.nextInt(6)+1);
-            int num2 = (rand.nextInt(6)+1);
 
-            //rolls cannot be skulls
-            while(val[num1]==Faces.SKULL){
-                num1 = (rand.nextInt(6)+1);
-            }
-            //rolls also cannot be the same die
-            while(val[num2]==Faces.SKULL || num2==num1){
-                num2 = (rand.nextInt(6)+1);
-            }
-
-            val = reroll(mydice, val, num1, num2);
+            reroll(mydice,2);
 
             //reprint dice values
-            for (Faces value : val) {
-                System.out.print(value + "\t");
+            for (Dice die : mydice) {
+                System.out.print(die.val + "\t");
             }
             System.out.println("\n");
             //System.out.println("You rolled..." + val[num1] + " and " + val[num2]);
 
             //traverse die to check for skulls
-            for (Faces faces : val) {
-                if (faces == Faces.SKULL) {
+            for (Dice die : mydice) {
+                if (die.val == Faces.SKULL) {
                     skulls += 1;
                 }
             }
-
-            //player choice -- do they want to roll again
-            c = rand.nextInt(2);
         }
 
-        for (Faces faces : val) {
-            if (faces == Faces.GOLD) {
+        updateScore(mydice);
+    }
+
+    public void updateScore(Dice[] mydice){
+        for (Dice die : mydice) {
+            if (die.val == Faces.GOLD) {
                 gold++;
-            } else if (faces == Faces.DIAMOND) {
+            } else if (die.val == Faces.DIAMOND) {
                 diamonds++;
             }
         }
-
         setScore();
     }
 
-    public static Faces[] reroll(Dice[] dicearr, Faces[] val, int... dice){
-        for (int die : dice) {
-            val[die] = dicearr[die].roll();
+    public static void reroll(Dice[] mydice,int roll_num){
+        Random rand = new Random();
+        int[] num = new int[roll_num];
+        System.out.println("Re-roll: ");
+
+        for(int n : num){
+            num[n]=(rand.nextInt(6)+1);
         }
-        return val;
+
+        //rolls cannot be skulls
+        while(mydice[num[0]].val==Faces.SKULL){
+            num[0] = (rand.nextInt(6)+1);
+        }
+        //rolls also cannot be the same die
+        while(mydice[num[1]].val==Faces.SKULL || num[1]==num[0]){
+            num[1] = (rand.nextInt(6)+1);
+        }
+
+        for (int n : num) {
+            mydice[n].val = mydice[n].roll();
+        }
     }
+
 
 }

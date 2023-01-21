@@ -4,10 +4,13 @@ import java.util.Random;
 
 public class Dice {
 
+    Faces val;
+
     public Faces roll() {
         int howManyFaces = Faces.values().length;
         Random bag = new Random();
-        return Faces.values()[bag.nextInt(howManyFaces)];
+        val = Faces.values()[bag.nextInt(howManyFaces)];
+        return val;
     }
     
 }
