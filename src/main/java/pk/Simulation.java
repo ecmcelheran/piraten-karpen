@@ -17,7 +17,7 @@ public class Simulation {
 
 
     public Simulation(int games, String[] args){
-        //Configurator.setAllLevels(LogManager.getRootLogger().getName(), Level.INFO);
+        Configurator.setAllLevels(LogManager.getRootLogger().getName(), Level.TRACE);
         System.out.println("Welcome to Piraten Kapern!");
 
         this.games = games;

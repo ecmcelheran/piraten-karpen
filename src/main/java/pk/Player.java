@@ -31,7 +31,7 @@ public class Player {
     }
 
     public void setScore(){
-        score = (values[2]+values[3])*100;
+        score += (values[2]+values[3])*100;
         //check for combos
         for(int i=0; i<values.length-1; i++){
             switch (values[i]){
@@ -71,20 +71,24 @@ public class Player {
         return score<6000;
     }
 
-    public static int rollAll(Dice[] mydice){
-        int skulls =0;
+    public void rollAll(Dice[] mydice){
+
         for(int i=0; i<8; i++){
             mydice[i] = new Dice();
             mydice[i].roll();
             logger.trace(mydice[i].val + "\t");
-            if(mydice[i].val==Faces.Skull){
-                skulls+=1;
-            }
+
         }
-        return skulls;
     }
 
     public void playTurn(Dice[] mydice){
+        for(int i=0; i<values.length; i++){
+            values[i]=0;
+        }
+        logger.trace("You rolled:");
+        rollAll(mydice);
+        updateValues(mydice);
+
         if(strat.equals("combo")){
             comboStrategy(mydice);
         }
@@ -95,15 +99,12 @@ public class Player {
 
     public void randomStrategy(Dice[] mydice){
         Random rand = new Random();
-        int skulls=0;
 
-        logger.trace("You rolled:");
-        skulls=rollAll(mydice);
-
-        //continue playing until 3 skulls rolled and while payer 'chooses' to continue
-        while(skulls<3 && rand.nextBoolean()){
-            skulls = 0;
-
+        //continue playing until 3 skulls rolled and while player 'chooses' to continue
+        while(values[5]<3 && rand.nextBoolean()){
+            for(int i=0; i<values.length; i++){
+                values[i]=0;
+            }
             randReroll(mydice,2);
 
             //log dice values
@@ -111,58 +112,71 @@ public class Player {
                 logger.trace(die.val);
             }
 
-            //traverse die to check for skulls
-            for (Dice die : mydice) {
-                if (die.val == Faces.Skull) {
-                    skulls += 1;
-                }
-            }
+            updateValues(mydice);
+
         }
-        if(skulls<3){
-            updateScore(mydice);
+        if(values[5]<3){
+            setScore();
         }
     }
 
     public void comboStrategy(Dice[] mydice){
         //maximize
         Random rand = new Random();
-        int skulls=0;
 
-        logger.trace("You rolled:");
-        skulls=rollAll(mydice);
+        int max=0;
+        Faces goal = Faces.Gold;
 
         //continue playing until 3 skulls rolled
-        while(skulls<3 && rand.nextBoolean()){
-            skulls = 0;
+        while(values[5]<3 && rand.nextBoolean()){
+            //find goal
+            for(int i=0; i<values.length-1; i++){
+                if(values[i]>max){
+                    max = values[i];
+                    goal = Faces.values()[i];
+                }
+            }
 
-            randReroll(mydice,2);
+            logger.trace("GOAL: " + goal);
+
+            for(int i=0;i<values.length;i++){
+                values[i]=0;
+            }
+
+            comboReroll(mydice, goal);
 
             //log dice values
             for (Dice die : mydice) {
                 logger.trace(die.val);
             }
 
-            //traverse die to check for skulls
-            for (Dice die : mydice) {
-                if (die.val == Faces.Skull) {
-                    skulls += 1;
-                }
-            }
+            updateValues(mydice);
+
         }
-        if(skulls<3){
-            updateScore(mydice);
+        if(values[5]<3){
+            setScore();
         }
     }
 
-    public void updateScore(Dice[] mydice){
+    public void updateValues(Dice[] mydice){
         for (Dice die : mydice) {
             //Monkey, Parrot, Gold, Diamond, Saber, Skull;
             for(Faces f : Faces.values()){
-                values[f.ordinal()]++;
+                if(die.val == f){
+                    values[f.ordinal()]++;
+                }
             }
         }
-        setScore();
     }
+
+    public static void comboReroll(Dice[] mydice, Faces goal){
+        for(Dice die: mydice) {
+            if (die.val != goal && die.val != Faces.Skull) {
+                die.val = die.roll();
+            }
+        }
+    }
+
 
     public static void randReroll(Dice[] mydice,int roll_num){
         Random rand = new Random();
