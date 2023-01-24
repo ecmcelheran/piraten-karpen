@@ -1,27 +1,74 @@
 package pk;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Random;
 
 public class Player {
-    int score, gold, diamonds;
+    private static final Logger logger = LogManager.getLogger(Player.class);
+    int score;
+    //Monkey, Parrot, Gold, Diamond, Saber, Skull;
+    int[] values = new int[6];
+    String strat;
+
     public Player(){
         score=0;
-        gold=0;
-        diamonds=0;
+        for(int i=0; i<values.length; i++){
+            values[i]=0;
+        }
+        strat = "random";
+    }
+    public Player(String strat){
+        this();
+        this.strat = strat;
     }
 
     public void reset(){
         score=0;
-        gold=0;
-        diamonds=0;
+        for(int i=0; i<values.length; i++){
+            values[i]=0;
+        }
     }
 
     public void setScore(){
-        score = (gold+diamonds)*100;
+        score = (values[2]+values[3])*100;
+        //check for combos
+        for(int i=0; i<values.length-1; i++){
+            switch (values[i]){
+                case 3:
+                    score+=100;
+                    break;
+                case 4:
+                    score+=200;
+                    break;
+                case 5:
+                    score+=500;
+                    break;
+                case 6:
+                    score+=1000;
+                    break;
+                case 7:
+                    score+=2000;
+                    break;
+                case 8:
+                    score+=4000;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    public String showScore(){
+        return Integer.toString(score);
     }
 
     public int getScore(){
         return score;
+    }
+
+    public boolean gameContinue(){
+        return score<6000;
     }
 
     public static int rollAll(Dice[] mydice){
@@ -29,34 +76,40 @@ public class Player {
         for(int i=0; i<8; i++){
             mydice[i] = new Dice();
             mydice[i].roll();
-            System.out.print(mydice[i].val + "\t");
+            logger.trace(mydice[i].val + "\t");
             if(mydice[i].val==Faces.Skull){
                 skulls+=1;
             }
         }
-        System.out.println();
         return skulls;
     }
 
     public void playTurn(Dice[] mydice){
+        if(strat.equals("combo")){
+            comboStrategy(mydice);
+        }
+        else{
+            randomStrategy(mydice);
+        }
+    }
+
+    public void randomStrategy(Dice[] mydice){
         Random rand = new Random();
         int skulls=0;
 
-        System.out.println("You rolled:");
+        logger.trace("You rolled:");
         skulls=rollAll(mydice);
 
-        //continue playing until 3 skulls rolled
-        while(skulls<3){
+        //continue playing until 3 skulls rolled and while payer 'chooses' to continue
+        while(skulls<3 && rand.nextBoolean()){
             skulls = 0;
 
-            reroll(mydice,2);
+            randReroll(mydice,2);
 
-            //reprint dice values
+            //log dice values
             for (Dice die : mydice) {
-                System.out.print(die.val + "\t");
+                logger.trace(die.val);
             }
-            System.out.println("\n");
-            //System.out.println("You rolled..." + val[num1] + " and " + val[num2]);
 
             //traverse die to check for skulls
             for (Dice die : mydice) {
@@ -65,25 +118,56 @@ public class Player {
                 }
             }
         }
+        if(skulls<3){
+            updateScore(mydice);
+        }
+    }
 
-        updateScore(mydice);
+    public void comboStrategy(Dice[] mydice){
+        //maximize
+        Random rand = new Random();
+        int skulls=0;
+
+        logger.trace("You rolled:");
+        skulls=rollAll(mydice);
+
+        //continue playing until 3 skulls rolled
+        while(skulls<3 && rand.nextBoolean()){
+            skulls = 0;
+
+            randReroll(mydice,2);
+
+            //log dice values
+            for (Dice die : mydice) {
+                logger.trace(die.val);
+            }
+
+            //traverse die to check for skulls
+            for (Dice die : mydice) {
+                if (die.val == Faces.Skull) {
+                    skulls += 1;
+                }
+            }
+        }
+        if(skulls<3){
+            updateScore(mydice);
+        }
     }
 
     public void updateScore(Dice[] mydice){
         for (Dice die : mydice) {
-            if (die.val == Faces.Gold) {
-                gold++;
-            } else if (die.val == Faces.Diamond) {
-                diamonds++;
+            //Monkey, Parrot, Gold, Diamond, Saber, Skull;
+            for(Faces f : Faces.values()){
+                values[f.ordinal()]++;
             }
         }
         setScore();
     }
 
-    public static void reroll(Dice[] mydice,int roll_num){
+    public static void randReroll(Dice[] mydice,int roll_num){
         Random rand = new Random();
         int[] num = new int[roll_num];
-        System.out.println("Re-roll: ");
+        logger.trace("Re-roll: ");
 
         for(int n : num){
             num[n]=(rand.nextInt(6)+1);

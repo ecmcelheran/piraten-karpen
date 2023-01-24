@@ -1,9 +1,10 @@
 import pk.Simulation;
 
-
 public class PiratenKarpen {
+
     public static void main(String[] args) {
-        Simulation sim = new Simulation(42);
+        //use first command line argument as number of games
+        Simulation sim = new Simulation(42, args);
 
     }
 }

@@ -1,6 +1,13 @@
 package pk;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
+
 public class Simulation {
+    private static final Logger logger = LogManager.getLogger(Simulation.class);
+
     int[] wins = {0,0};
     Player[] player = new Player[2];
     //game comes with 8 dice
@@ -9,7 +16,8 @@ public class Simulation {
     int games;
 
 
-    public Simulation(int games){
+    public Simulation(int games, String[] args){
+        //Configurator.setAllLevels(LogManager.getRootLogger().getName(), Level.INFO);
         System.out.println("Welcome to Piraten Kapern!");
 
         this.games = games;
@@ -20,29 +28,32 @@ public class Simulation {
         }
         //instantiate players
         for(int i=0; i<player.length; i++){
-            player[i] = new Player();
+            try {
+                player[i] = new Player(args[i]);
+            } catch(Exception e){
+                player[i] = new Player();
+            }
         }
 
         for(int i=0; i<games; i++){
-            System.out.println("--------GAME " + (i+1) + "--------");
+            logger.trace("--------GAME " + (i+1) + "--------");
             playGame();
             player[0].reset();
             player[1].reset();
         }
-        System.out.printf("Player 1 won %1.2f%% of games.\nPlayer 2 won  %1.2f%% of games.",wins[0]*100.0/42.0,wins[1]*100.0/42.0);
+        System.out.printf("Player 1 won %1.2f%% of games.\nPlayer 2 won %1.2f%% of games.",wins[0]*100.0/42.0,wins[1]*100.0/42.0);
     }
 
     public void playGame(){
-        //game ends when a player reaches 6000 points
-        while(player[0].getScore()<6000 && player[1].getScore()<6000){
+        //game continues as long as player scores are lower than 6000
+        while(player[0].gameContinue() && player[1].gameContinue()){
 
-            System.out.println("-PLAYER 1-\n");
+            logger.info("-PLAYER 1-\n");
             player[0].playTurn(mydice);
-            System.out.println();
-            System.out.println("\n-PLAYER 2-\n");
+            logger.info("-PLAYER 2-\n");
             player[1].playTurn(mydice);
 
-            System.out.println("\nPlayer 1 score: " + player[0].getScore() + "\nPlayer 2 score: " + player[1].getScore() + "\n\n");
+            logger.info("Player 1 score: "+ player[0].showScore()+"\nPlayer 2 score: "+ player[1].showScore());
         }
 
         if(player[0].getScore()>player[1].getScore()){
