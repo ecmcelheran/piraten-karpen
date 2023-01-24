@@ -29,15 +29,15 @@ Remark: **We are assuming here you are using a _real_ shell (e.g., anything but 
 
 | MVP? | Id  | Feature  | Status  |  Started  | Delivered |
 | :-:  |:-:  |---       | :-:     | :-:       | :-:       |
-| YES   | F01 | Roll a dice |  S | 01/01/23 | 01/18/23 |
-| YES   | F02 | Roll eight dices  |  S | 01/12/23  | 01/18/23 |
+| YES   | F01 | Roll a dice |  D | 01/01/23 | 01/18/23 |
+| YES   | F02 | Roll eight dices  |  D | 01/12/23  | 01/18/23 |
 | x   | F03 | Select how many games as command-line arg.  |  P  |   |
-| YES   | F04 | End of turn with three skulls | S | 01/12/23 |  |
-| YES   | F05 | End of game when player reaches 6000 points| S | |
-| YES   | F06 | Player keeping random dice at their turn | B (F02) | 01/16/2023|  | 
-| YES   | F07 | Score points: diamonds and coins | B (F04) | | 
-| YES   | F08 | Track percentage of wins of each player | S | 01/15/23 | 01/16/23 |
-| x   | F09 | Implement Strategy to maximize combos | P | | 
-| x   | F10 | Score points: Combos | P | |
+| YES   | F04 | End of turn with three skulls | D | 01/12/23 | 01/20/23 |
+| YES   | F05 | End of game when player reaches 6000 points| D | 01/20/23 |
+| YES   | F06 | Player keeping random dice at their turn | D | 01/16/2023| 01/20/23 | 
+| YES   | F07 | Score points: diamonds and coins | D | 01/20/23 | 
+| YES   | F08 | Track percentage of wins of each player | D | 01/15/23 | 01/16/23 |
+| x   | F09 | Implement Strategy to maximize combos | 01/23/23 | | 
+| x   | F10 | Score points: Combos | 01/23/23 | |
 | x   | F11 | Implement Card Draw | P | |
 
