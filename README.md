@@ -15,6 +15,11 @@
     * `mvn package`
   * To run the packaged delivery:
     * `java -jar target/piraten-karpen-jar-with-dependencies.jar` 
+  * To run with different player strategies
+    * `mvn exec:java -Dexec.args="strategy1 strategy2"`
+  * To run in 'trace mode':
+    * `mvn exec:java -Dexec.args="trace"`
+    * `mvn exec:java -Dexec.args="trace strategy1 strategy2"`
 
 Remark: **We are assuming here you are using a _real_ shell (e.g., anything but PowerShell on Windows)**
 
@@ -23,7 +28,7 @@ Remark: **We are assuming here you are using a _real_ shell (e.g., anything but 
  * Status: 
    * Pending (P), Started (S), Blocked (B), Done (D)
  * Definition of Done (DoD):
-   * < Your DoD goes here >
+   * The specified feature is functional, object-oriented, and delivered
 
 ### Backlog 
 
@@ -39,5 +44,6 @@ Remark: **We are assuming here you are using a _real_ shell (e.g., anything but 
 | YES   | F08 | Track percentage of wins of each player | D | 01/15/23 | 01/16/23 |
 | x   | F09 | Implement Strategy to maximize combos | D | 01/23/23 | 01/24/23 | 
 | x   | F10 | Score points: Combos | D |01/23/23 | 01/24/23 |
-| x   | F11 | Implement Card Draw | P | | 
+| x   | F11 | Implement Card Draw into Turn | S | 01/25/23 | |
+| x   | F12 | Introduce sea battle card | S | 01/25/23 | |
 
