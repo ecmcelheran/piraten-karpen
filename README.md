@@ -38,6 +38,6 @@ Remark: **We are assuming here you are using a _real_ shell (e.g., anything but 
 | YES   | F07 | Score points: diamonds and coins | D | 01/20/23 | 
 | YES   | F08 | Track percentage of wins of each player | D | 01/15/23 | 01/16/23 |
 | x   | F09 | Implement Strategy to maximize combos | D | 01/23/23 | 01/24/23 | 
-| x   | F10 | Score points: Combos | 01/23/23 | |
-| x   | F11 | Implement Card Draw | P | |
+| x   | F10 | Score points: Combos | D |01/23/23 | 01/24/23 |
+| x   | F11 | Implement Card Draw | P | | 
 
