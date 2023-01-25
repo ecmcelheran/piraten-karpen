@@ -56,6 +56,7 @@ public class Simulation {
     }
 
     public void playGame(){
+        CardDeck deck = new CardDeck();
         int winner = 0;
         boolean gameContinue = true;
 
@@ -64,7 +65,7 @@ public class Simulation {
 
             for(int i=0; i<player.length; i++){
                 logger.debug("Player " + (i+1) + "'s turn");
-                player[i].playTurn(mydice);
+                player[i].playTurn(mydice, deck);
             }
 
             //check player scores

@@ -13,9 +13,6 @@ public class Player {
 
     public Player(){
         score=0;
-        for(int i=0; i<values.length; i++){
-            values[i]=0;
-        }
         strat = "random";
     }
     public Player(String strat){
@@ -59,6 +56,16 @@ public class Player {
         }
     }
 
+    public void setScore(int bonus){
+        score+=bonus;
+        setScore();
+    }
+
+    public void penalty(int scoreReduction){
+        score-=scoreReduction;
+    }
+
+
     public String showScore(){
         return Integer.toString(score);
     }
@@ -76,25 +83,49 @@ public class Player {
         for(int i=0; i<8; i++){
             mydice[i] = new Dice();
             mydice[i].roll();
-            logger.trace(mydice[i].val + "\t");
-
         }
+        logValues(mydice);
     }
 
-    public void playTurn(Dice[] mydice){
+    public void playTurn(Dice[] mydice, CardDeck deck){
+        Card card;
         for(int i=0; i<values.length; i++){
             values[i]=0;
         }
+
+        card = deck.draw();
+        logger.trace("Card Drawn: " + card.face);
+
         logger.trace("You rolled:");
         rollAll(mydice);
         updateValues(mydice);
 
-        if(strat.equals("combo")){
-            comboStrategy(mydice);
+        switch (card.face){
+            case SeaBattle:
+                boolean success = seaBattle(mydice, card);
+                if(values[5]<3 && success){
+                    setScore(card.value);
+                }
+                else{
+                    penalty(card.value);
+                }
+
+                break;
+            default:
+                if(strat.equals("combo")){
+                    comboStrategy(mydice);
+                }
+                else{
+                    randomStrategy(mydice);
+                }
+
+                if(values[5]<3){
+                    setScore();
+                }
+
+                break;
         }
-        else{
-            randomStrategy(mydice);
-        }
+
     }
 
     public void randomStrategy(Dice[] mydice){
@@ -107,16 +138,10 @@ public class Player {
             }
             randReroll(mydice,2);
 
-            //log dice values
-            for (Dice die : mydice) {
-                logger.trace(die.val);
-            }
+            logValues(mydice);
 
             updateValues(mydice);
 
-        }
-        if(values[5]<3){
-            setScore();
         }
     }
 
@@ -145,17 +170,35 @@ public class Player {
 
             comboReroll(mydice, goal);
 
-            //log dice values
-            for (Dice die : mydice) {
-                logger.trace(die.val);
-            }
+            logValues(mydice);
 
             updateValues(mydice);
 
         }
-        if(values[5]<3){
-            setScore();
+
+    }
+
+    public boolean seaBattle(Dice[] mydice, Card mycard){
+        int goal = mycard.swords;
+        logger.trace("GOAL: " + goal + " swords in sea battle");
+
+        //continue playing until 3 skulls rolled
+        while(values[5]<3 && values[4]<goal){
+
+            for(int i=0;i<values.length;i++){
+                values[i]=0;
+            }
+
+            comboReroll(mydice, Faces.Sword);
+
+            logValues(mydice);
+
+            updateValues(mydice);
+
         }
+
+        return values[4] >= goal;
+
     }
 
     public void updateValues(Dice[] mydice){
@@ -199,6 +242,15 @@ public class Player {
         for (int n : num) {
             mydice[n].val = mydice[n].roll();
         }
+    }
+
+    public void logValues(Dice[] mydice){
+        String dicevalues="";
+        //log dice values
+        for (Dice die : mydice) {
+            dicevalues+=(die.val + "\t");
+        }
+        logger.trace(dicevalues);
     }
 
 
