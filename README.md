@@ -45,5 +45,5 @@ Remark: **We are assuming here you are using a _real_ shell (e.g., anything but 
 | x   | F09 | Implement Strategy to maximize combos | D | 01/23/23 | 01/24/23 | 
 | x   | F10 | Score points: Combos | D |01/23/23 | 01/24/23 |
 | x   | F11 | Implement Card Draw into Turn | S | 01/25/23 | |
-| x   | F11 | Introduce sea battle card | S | 01/25/23 | |
+| x   | F12 | Introduce sea battle card | S | 01/25/23 | |
 
