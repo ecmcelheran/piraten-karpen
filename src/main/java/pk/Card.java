@@ -3,16 +3,21 @@ package pk;
 public class Card {
 
     CardFace face;
-    int value;
-    int swords;
-    public Card(){
 
+    int swords, points;
+
+    public Card(CardFace face){
+        this.face = face;
     }
 
-    public Card(CardFace face, int value, int swords){
-        this.face = face;
-        this.value = value;
+    public Card(CardFace face, int points, int swords){
+        this(face);
+        this.points = points;
         this.swords = swords;
+    }
+
+    public int getSwords(){
+        return swords;
     }
 
 }

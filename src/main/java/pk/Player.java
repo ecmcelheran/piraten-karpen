@@ -2,6 +2,7 @@ package pk;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class Player {
@@ -22,43 +23,34 @@ public class Player {
 
     public void reset(){
         score=0;
-        for(int i=0; i<values.length; i++){
-            values[i]=0;
-        }
+        Arrays.fill(values, 0);
     }
 
-    public void setScore(){
+    public void setScore(CardFace card){
         score += (values[2]+values[3])*100;
+        //combine parrot and monkey dice if card is Monkey Business
+        if(card == CardFace.MonkeyBusiness){
+            values[0]+=values[1];
+            values[1]=0;
+        }
         //check for combos
         for(int i=0; i<values.length-1; i++){
-            switch (values[i]){
-                case 3:
-                    score+=100;
-                    break;
-                case 4:
-                    score+=200;
-                    break;
-                case 5:
-                    score+=500;
-                    break;
-                case 6:
-                    score+=1000;
-                    break;
-                case 7:
-                    score+=2000;
-                    break;
-                case 8:
-                    score+=4000;
-                    break;
-                default:
-                    break;
+            switch (values[i]) {
+                case 3 -> score += 100;
+                case 4 -> score += 200;
+                case 5 -> score += 500;
+                case 6 -> score += 1000;
+                case 7 -> score += 2000;
+                case 8 -> score += 4000;
+                default -> {
+                }
             }
         }
     }
 
-    public void setScore(int bonus){
+    public void setScore(int bonus, CardFace card){
         score+=bonus;
-        setScore();
+        setScore(card);
     }
 
     public void penalty(int scoreReduction){
@@ -89,9 +81,7 @@ public class Player {
 
     public void playTurn(Dice[] mydice, CardDeck deck){
         Card card;
-        for(int i=0; i<values.length; i++){
-            values[i]=0;
-        }
+        Arrays.fill(values, 0);
 
         card = deck.draw();
         logger.trace("Card Drawn: " + card.face);
@@ -102,14 +92,13 @@ public class Player {
 
         switch (card.face){
             case SeaBattle:
-                boolean success = seaBattle(mydice, card);
+                boolean success = seaBattleStrategy(mydice, card.getSwords());
                 if(values[5]<3 && success){
-                    setScore(card.value);
+                    setScore(card.points, card.face);
                 }
                 else{
-                    penalty(card.value);
+                    penalty(card.points);
                 }
-
                 break;
             default:
                 if(strat.equals("combo")){
@@ -118,11 +107,9 @@ public class Player {
                 else{
                     randomStrategy(mydice);
                 }
-
                 if(values[5]<3){
-                    setScore();
+                    setScore(card.face);
                 }
-
                 break;
         }
 
@@ -133,9 +120,8 @@ public class Player {
 
         //continue playing until 3 skulls rolled and while player 'chooses' to continue
         while(values[5]<3 && rand.nextBoolean()){
-            for(int i=0; i<values.length; i++){
-                values[i]=0;
-            }
+            Arrays.fill(values, 0);
+
             randReroll(mydice,2);
 
             logValues(mydice);
@@ -164,9 +150,7 @@ public class Player {
 
             logger.trace("GOAL: " + goal);
 
-            for(int i=0;i<values.length;i++){
-                values[i]=0;
-            }
+            Arrays.fill(values, 0);
 
             comboReroll(mydice, goal);
 
@@ -178,8 +162,7 @@ public class Player {
 
     }
 
-    public boolean seaBattle(Dice[] mydice, Card mycard){
-        int goal = mycard.swords;
+    public boolean seaBattleStrategy(Dice[] mydice, int goal){
         logger.trace("GOAL: " + goal + " swords in sea battle");
 
         //continue playing until 3 skulls rolled
@@ -252,6 +235,4 @@ public class Player {
         }
         logger.trace(dicevalues);
     }
-
-
-}
+}//end of class

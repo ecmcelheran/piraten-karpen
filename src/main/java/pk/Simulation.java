@@ -27,9 +27,6 @@ public class Simulation {
         }
 
         wins = new int[player.length];
-        for(int w: wins){
-            w=0;
-        }
 
         //instantiate dice
         for(int i=0; i<mydice.length; i++){
@@ -47,8 +44,9 @@ public class Simulation {
         for(int i=0; i<games; i++){
             logger.trace("--------GAME " + (i+1) + "--------");
             playGame();
-            player[0].reset();
-            player[1].reset();
+            for(Player p : player){
+                p.reset();
+            }
         }
         for(int i=0; i<player.length;i++){
             System.out.printf("Player " + (i+1) + " won %1.2f%% of games.\n", wins[i]*100.0/games);
@@ -76,7 +74,13 @@ public class Simulation {
                 }
             }
 
-            logger.info("Player 1 score: "+ player[0].showScore()+"\nPlayer 2 score: "+ player[1].showScore());
+            String scoreInfo="";
+            for(int i=0; i<player.length; i++){
+                scoreInfo+=("\nPlayer " + (i+1) + " score: " + player[i].showScore());
+            }
+
+            logger.info(scoreInfo);
+            //logger.info("Player 1 score: "+ player[0].showScore()+"\nPlayer 2 score: "+ player[1].showScore());
         }
 
         //check winner

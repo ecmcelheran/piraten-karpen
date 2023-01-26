@@ -14,8 +14,11 @@ public class CardDeck {
         for(int i=0; i<6; i++){
             cards.add(new Card(CardFace.SeaBattle, (i*100),i));
         }
-        for(int i=6; i<35; i++){
-            cards.add(new Card(CardFace.nop, 0,0));
+        for(int i=6; i<10; i++){
+            cards.add(new Card(CardFace.MonkeyBusiness));
+        }
+        for(int i=10; i<35; i++){
+            cards.add(new Card(CardFace.nop));
         }
 
         shuffle();
