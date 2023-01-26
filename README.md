@@ -46,4 +46,6 @@ Remark: **We are assuming here you are using a _real_ shell (e.g., anything but 
 | x   | F10 | Score points: Combos | D |01/23/23 | 01/24/23 |
 | x   | F11 | Implement Card Draw into Turn | S | 01/25/23 | |
 | x   | F12 | Introduce sea battle card | S | 01/25/23 | |
+| x   | F13 | Give option of command line arguments for trace mode, number of games and player strategy | S | 01/24/23 | 01/25/23 |
+| x   | F14 | Introduce monkey business card | S | 01/25/23 | |
 
