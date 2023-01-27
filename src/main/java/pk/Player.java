@@ -31,6 +31,7 @@ public class Player {
         //combine parrot and monkey dice if card is Monkey Business
         if(card == CardFace.MonkeyBusiness){
             values[0]+=values[1];
+            //ensure combos are not counted twice
             values[1]=0;
         }
         //check for combos
@@ -168,9 +169,7 @@ public class Player {
         //continue playing until 3 skulls rolled
         while(values[5]<3 && values[4]<goal){
 
-            for(int i=0;i<values.length;i++){
-                values[i]=0;
-            }
+            Arrays.fill(values, 0);
 
             comboReroll(mydice, Faces.Sword);
 
