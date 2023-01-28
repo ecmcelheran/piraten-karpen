@@ -1,61 +1,74 @@
 import org.apache.commons.cli.*;
 import pk.Simulation;
-import org.apache.logging.log4j.Level;
-
 
 public class PiratenKarpen {
 
     public static void main(String[] args) {
-        //command line arguments determine mode (i.e. trace mode), number of games and player strategies
+        //create command line parser
+        CommandLineParser parser = new DefaultParser();
+
+        //default settings
         String mode = "fatal";
         int games = 42;
-        String[] strategies;
+        int[] strategies = new int[2];
+        int r=0, c=0;
 
-        if(args.length>7){
-            System.out.println("Cannot use requested settings for simulation -- using built-in settings");
-            strategies = new String[0];
-        }
-        else{
-            //mode and games
-            try{
-                mode = args[0];
-                games = Integer.parseInt(args[1]);
-                strategies = init(args,2);
+        //options
+        Options options = new Options();
+        options.addOption("tr",false,"turn on trace mode");
+        options.addOption(Option.builder("games").hasArg().desc("play GAMES many games in a simulation").build());
+        options.addOption("r", "random", true, "random strategy for <arg> players");
+        options.addOption("c", "combo", true, "combo strategy for <arg> players");
 
-                if(Level.getLevel(mode.toUpperCase())==null){
-                    throw new Exception();
-                }
+        //parse command line
+        try {
+            CommandLine cmd = parser.parse(options, args);
 
-            }catch(Exception e1){
-                //just mode
+            if(cmd.hasOption("tr")){
+                mode = "trace";
+            }
+
+            if(cmd.hasOption("games")){
+                games = Integer.parseInt(cmd.getOptionValue("games"));
+            }
+
+            if(cmd.hasOption("r")){
                 try{
-                    mode = args[0];
-                    strategies = init(args,1);
-                    if(Level.getLevel(mode.toUpperCase())==null){
-                        throw new Exception();
-                    }
-                }
-                catch(Exception e2){
-                    //just game
-                    try{
-                        games = Integer.parseInt(args[1]);
-                        strategies = init(args,1);
-                    }
-                    //all strategy
-                    catch(Exception e3){
-                        strategies = init(args,0);
-                    }
+                    r = Integer.parseInt(cmd.getOptionValue("r"));
+                }catch(Exception e){
+                    r=1;
                 }
             }
+            if(cmd.hasOption("c")){
+                try{
+                    c = Integer.parseInt(cmd.getOptionValue("c"));
+                }catch(Exception e){
+                    c=1;
+                }
+            }
+            if(r+c>=2 && r+c<=5){
+                strategies[0] = r;
+                strategies[1] = c;
+            }
+            else{
+                System.out.println("invalid number of players --using default player settings");
+                strategies[0] = 2;
+            }
+
+        } catch (ParseException exp) {
+            System.err.println("Parsing Failed -- replacing with built-in settings\n");
+            help(options);
         }
 
+        //run simulation
         Simulation sim = new Simulation(mode, games, strategies);
-
     }
 
-    public static String[] init(String[] args, int start){
-        String[] array = new String[args.length-start];
-        if (args.length - start >= 0) System.arraycopy(args, start, array, 0, args.length - start);
-        return array;
+    public static void help(Options options){
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("mvn exec:java -Dexec.args=\"[options]\"", options);
+        System.out.println();
     }
+
+
 }

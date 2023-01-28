@@ -15,30 +15,26 @@ public class Simulation {
 
     int games;
 
-    public Simulation(String mode, int games, String... args){
+    public Simulation(String mode, int games, int[] args){
         System.out.println("Welcome to Piraten Kapern!");
         Configurator.setAllLevels(LogManager.getRootLogger().getName(), Level.getLevel(mode.toUpperCase()));
         this.games = games;
-        if(args.length>1){
-            player = new Player[args.length];
-        }
-        else{
-            player = new Player[2];
-        }
+        int num_players = args[0] + args[1];
 
-        wins = new int[player.length];
+        player = new Player[num_players];
+
+        wins = new int[num_players];
 
         //instantiate dice
         for(int i=0; i<mydice.length; i++){
             mydice[i] = new Dice();
         }
         //instantiate players
-        for(int i=0; i<player.length; i++){
-            try {
-                player[i] = new Player(args[i]);
-            } catch(Exception e){
-                player[i] = new Player();
-            }
+        for(int i=0; i<args[0]; i++){
+            player[i] = new Player("random");
+        }
+        for(int i=args[0]; i<num_players; i++){
+            player[i] = new Player("combo");
         }
 
         for(int i=0; i<games; i++){

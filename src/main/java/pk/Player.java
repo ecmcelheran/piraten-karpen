@@ -19,6 +19,7 @@ public class Player {
     public Player(String strat){
         this();
         this.strat = strat;
+        logger.debug("Player strategy: " + strat);
     }
 
     public void reset(){
