@@ -15,11 +15,14 @@
     * `mvn package`
   * To run the packaged delivery:
     * `java -jar target/piraten-karpen-jar-with-dependencies.jar` 
-  * To run with different player strategies
-    * `mvn exec:java -Dexec.args="strategy1 strategy2"`
+  * To run with different player strategies (where # is the number of players with that strategy):
+    * `mvn exec:java -Dexec.args="-r # -c #"`
+    * `mvn exec:java -Dexec.args="--random # --combo #"`
   * To run in 'trace mode':
-    * `mvn exec:java -Dexec.args="trace"`
-    * `mvn exec:java -Dexec.args="trace strategy1 strategy2"`
+    * `mvn exec:java -Dexec.args="-tr"`
+  * To change number of games in the simulation (where # is the number of games):
+    * `mvn exec:java -Dexec.args="-games #"`
+
 
 Remark: **We are assuming here you are using a _real_ shell (e.g., anything but PowerShell on Windows)**
 
