@@ -4,6 +4,7 @@ import pk.Simulation;
 public class PiratenKarpen {
 
     public static void main(String[] args) {
+        //Handle command line
         //create command line parser
         CommandLineParser parser = new DefaultParser();
 

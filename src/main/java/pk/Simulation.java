@@ -17,6 +17,8 @@ public class Simulation {
 
     public Simulation(String mode, int games, int[] args){
         System.out.println("Welcome to Piraten Kapern!");
+
+        //instantiate level, number of games, players, dice -- prepare everything for simulation
         Configurator.setAllLevels(LogManager.getRootLogger().getName(), Level.getLevel(mode.toUpperCase()));
         this.games = games;
         int num_players = args[0] + args[1];
@@ -37,53 +39,25 @@ public class Simulation {
             player[i] = new Player("combo");
         }
 
+        Game[] game = new Game[games];
+
+        //play all simulation games
         for(int i=0; i<games; i++){
             logger.trace("--------GAME " + (i+1) + "--------");
-            playGame();
+            //playGame();
+            game[i] = new Game(player, mydice);
+            wins[game[i].getWinner()]++;
+
+            //reset player scores after each game
             for(Player p : player){
                 p.reset();
             }
         }
+
+        //output player winning percentages
         for(int i=0; i<player.length;i++){
             System.out.printf("Player " + (i+1) + " won %1.2f%% of games.\n", wins[i]*100.0/games);
         }
     }
 
-    public void playGame(){
-        CardDeck deck = new CardDeck();
-        int winner = 0;
-        boolean gameContinue = true;
-
-        //game continues as long as player scores are lower than 6000
-        while(gameContinue){
-
-            for(int i=0; i<player.length; i++){
-                logger.debug("Player " + (i+1) + "'s turn");
-                player[i].playTurn(mydice, deck);
-            }
-
-            //check player scores
-            for(Player p: player){
-                if(!p.gameContinue()){
-                    gameContinue = false;
-                    break;
-                }
-            }
-
-            StringBuilder scoreInfo= new StringBuilder();
-            for(int i=0; i<player.length; i++){
-                scoreInfo.append("\nPlayer ").append(i + 1).append(" score: ").append(player[i].getScore());
-            }
-            logger.info(scoreInfo.toString());
-        }
-
-        //check winner
-        for(int i=0; i<player.length; i++){
-            if(player[i].getScore()>player[winner].getScore()){
-                winner = i;
-            }
-        }
-
-        wins[winner]++;
-    }
 }

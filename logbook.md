@@ -15,3 +15,5 @@ January 25 2023 - Added drawing a card to a player turn. Added new Sea Battle st
 January 26 2023 - Implement Monkey Business Card, combine values for parrot and monkey into 1 for combo.
 
 January 28 2023 - Complete Bonus activities.
+
+January 29 2023 - Minor fixes in code.

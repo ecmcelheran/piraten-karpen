@@ -67,21 +67,12 @@ public class Player {
         score+=turnScore;
     }
 
-    public void setScore(int bonus, Card card){
-        score+=bonus;
-        setScore(card);
-    }
-
     public void penalty(int scoreReduction){
         score-=scoreReduction;
     }
 
     public int getScore(){
         return score;
-    }
-
-    public boolean gameContinue(){
-        return score<6000;
     }
 
     public void rollAll(Dice[] mydice){
@@ -97,24 +88,32 @@ public class Player {
         Card card;
         boolean success;
 
+        //draw a card
         card = deck.draw();
         logger.trace("Card Drawn: " + card.face);
 
-        //values is an array of values all 0
+        //values - number of dice of each value - all currently 0
         clear(values, card);
 
         logger.trace("You rolled:");
         rollAll(mydice);
         updateValues(mydice);
 
-        if (card.face.equals(CardFace.SeaBattle) && strat.equals("combo")) {
-            success = seaBattleStrategy(mydice, card);
+        if (card.face.equals(CardFace.SeaBattle)) {
+            if(strat.equals("combo")){
+                success = seaBattleStrategy(mydice, card);
+            }
+            else{
+                success = randomStrategy(mydice, card);
+            }
             if(!success){
                 penalty(card.points);
             }
-        } else if (strat.equals("combo")) {
+        }
+        else if (strat.equals("combo")) {
             success = comboStrategy(mydice, card);
-        } else {
+        }
+        else {
             success = randomStrategy(mydice, card);
         }
 
@@ -138,24 +137,23 @@ public class Player {
             updateValues(mydice);
 
         }
+
+        //turn successful if there are less than 3 skulls at the end of the turn
+        if(card.face.equals(CardFace.SeaBattle)){
+            return values[5]<3 && values[4]>=card.getSwords();
+        }
         return values[5]<3;
     }
 
     public boolean comboStrategy(Dice[] mydice, Card card){
         boolean diceToRoll = true;
 
-        int max=0;
-        Faces goal = Faces.Gold;
+        Faces goal;
 
         //continue playing until 3 skulls rolled, or player 'chooses' to stop rolling
         while(values[5]<3 && diceToRoll){
-            //find goal
-            for(int i=0; i<values.length-1; i++){
-                if(values[i]>max){
-                    max = values[i];
-                    goal = Faces.values()[i];
-                }
-            }
+
+            goal = findGoal();
 
             logger.trace("GOAL: " + goal);
 
@@ -169,6 +167,7 @@ public class Player {
 
         }
 
+        //turn is successful if there are less than 3 skulls at the end of the turn
         return values[5]<3;
 
     }
@@ -193,13 +192,13 @@ public class Player {
 
         }
         //was player successful in getting the number of swords required?
+        //and are there less than 3 skulls?
         return values[4] >= goal && values[5]<3;
 
     }
 
     public void updateValues(Dice[] mydice){
         for (Dice die : mydice) {
-            //Monkey, Parrot, Gold, Diamond, Saber, Skull;
             //track number of dice with each face value
             for(Faces f : Faces.values()){
                 if(die.val == f){
@@ -271,5 +270,17 @@ public class Player {
         if(card.face.equals(CardFace.Skull)){
             values[5] += card.getSkulls();
         }
+    }
+
+    public Faces findGoal(){
+        int max=0;
+        Faces goal = Faces.Gold;
+        for(int i=0; i<values.length-1; i++){
+            if(values[i]>max){
+                max = values[i];
+                goal = Faces.values()[i];
+            }
+        }
+        return goal;
     }
 }//end of class
