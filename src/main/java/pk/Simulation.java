@@ -70,13 +70,11 @@ public class Simulation {
                 }
             }
 
-            String scoreInfo="";
+            StringBuilder scoreInfo= new StringBuilder();
             for(int i=0; i<player.length; i++){
-                scoreInfo+=("\nPlayer " + (i+1) + " score: " + player[i].showScore());
+                scoreInfo.append("\nPlayer ").append(i + 1).append(" score: ").append(player[i].getScore());
             }
-
-            logger.info(scoreInfo);
-            //logger.info("Player 1 score: "+ player[0].showScore()+"\nPlayer 2 score: "+ player[1].showScore());
+            logger.info(scoreInfo.toString());
         }
 
         //check winner

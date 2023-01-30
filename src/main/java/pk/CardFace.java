@@ -1,5 +1,5 @@
 package pk;
 
 public enum CardFace {
-    SeaBattle, MonkeyBusiness, nop;
+    SeaBattle, MonkeyBusiness, Gold, Diamond, Skull, Captain, nop;
 }

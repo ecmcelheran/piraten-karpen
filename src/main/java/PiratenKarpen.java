@@ -51,7 +51,6 @@ public class PiratenKarpen {
                 strategies[1] = c;
             }
             else{
-                System.out.println("invalid number of players --using default player settings");
                 strategies[0] = 2;
             }
 

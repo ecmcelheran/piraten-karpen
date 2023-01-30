@@ -3,6 +3,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Random;
 
 public class Player {
@@ -12,12 +13,9 @@ public class Player {
     int[] values = new int[6];
     String strat;
 
-    public Player(){
-        score=0;
-        strat = "random";
-    }
+
     public Player(String strat){
-        this();
+        score = 0;
         this.strat = strat;
         logger.debug("Player strategy: " + strat);
     }
@@ -27,10 +25,22 @@ public class Player {
         Arrays.fill(values, 0);
     }
 
-    public void setScore(CardFace card){
-        score += (values[2]+values[3])*100;
+    public void setScore(Card card){
+        if(card.face.equals(CardFace.Gold)){
+            values[2]++;
+        }
+        else if(card.face.equals(CardFace.Diamond)){
+            values[3]++;
+        }
+
+        int turnScore = (values[2]+values[3])*100;
+
+        if(card.face.equals(CardFace.SeaBattle)){
+            turnScore+=card.getPoints();
+        }
+
         //combine parrot and monkey dice if card is Monkey Business
-        if(card == CardFace.MonkeyBusiness){
+        if(card.face.equals(CardFace.MonkeyBusiness)){
             values[0]+=values[1];
             //ensure combos are not counted twice
             values[1]=0;
@@ -38,30 +48,32 @@ public class Player {
         //check for combos
         for(int i=0; i<values.length-1; i++){
             switch (values[i]) {
-                case 3 -> score += 100;
-                case 4 -> score += 200;
-                case 5 -> score += 500;
-                case 6 -> score += 1000;
-                case 7 -> score += 2000;
-                case 8 -> score += 4000;
+                case 3 -> turnScore += 100;
+                case 4 -> turnScore += 200;
+                case 5 -> turnScore += 500;
+                case 6 -> turnScore += 1000;
+                case 7 -> turnScore += 2000;
+                case 8 -> turnScore += 4000;
                 default -> {
                 }
             }
         }
+
+        if(card.face.equals(CardFace.Captain)){
+            turnScore*=2;
+            logger.trace("Player score from turn multiplied by 2");
+        }
+
+        score+=turnScore;
     }
 
-    public void setScore(int bonus, CardFace card){
+    public void setScore(int bonus, Card card){
         score+=bonus;
         setScore(card);
     }
 
     public void penalty(int scoreReduction){
         score-=scoreReduction;
-    }
-
-
-    public String showScore(){
-        return Integer.toString(score);
     }
 
     public int getScore(){
@@ -83,46 +95,41 @@ public class Player {
 
     public void playTurn(Dice[] mydice, CardDeck deck){
         Card card;
-        Arrays.fill(values, 0);
+        boolean success;
 
         card = deck.draw();
         logger.trace("Card Drawn: " + card.face);
+
+        //values is an array of values all 0
+        clear(values, card);
 
         logger.trace("You rolled:");
         rollAll(mydice);
         updateValues(mydice);
 
-        switch (card.face){
-            case SeaBattle:
-                boolean success = seaBattleStrategy(mydice, card.getSwords());
-                if(values[5]<3 && success){
-                    setScore(card.points, card.face);
-                }
-                else{
-                    penalty(card.points);
-                }
-                break;
-            default:
-                if(strat.equals("combo")){
-                    comboStrategy(mydice);
-                }
-                else{
-                    randomStrategy(mydice);
-                }
-                if(values[5]<3){
-                    setScore(card.face);
-                }
-                break;
+        if (card.face.equals(CardFace.SeaBattle) && strat.equals("combo")) {
+            success = seaBattleStrategy(mydice, card);
+            if(!success){
+                penalty(card.points);
+            }
+        } else if (strat.equals("combo")) {
+            success = comboStrategy(mydice, card);
+        } else {
+            success = randomStrategy(mydice, card);
         }
 
+        //only add to score if turn is a 'success' (less than 3 skulls, and if sea battle, gets enough swords)
+        if (success) {
+                setScore(card);
+        }
     }
 
-    public void randomStrategy(Dice[] mydice){
+    public boolean randomStrategy(Dice[] mydice, Card card){
         Random rand = new Random();
 
         //continue playing until 3 skulls rolled and while player 'chooses' to continue
         while(values[5]<3 && rand.nextBoolean()){
-            Arrays.fill(values, 0);
+            clear(values, card);
 
             randReroll(mydice,2);
 
@@ -131,17 +138,17 @@ public class Player {
             updateValues(mydice);
 
         }
+        return values[5]<3;
     }
 
-    public void comboStrategy(Dice[] mydice){
-        //maximize
-        Random rand = new Random();
+    public boolean comboStrategy(Dice[] mydice, Card card){
+        boolean diceToRoll = true;
 
         int max=0;
         Faces goal = Faces.Gold;
 
-        //continue playing until 3 skulls rolled
-        while(values[5]<3 && rand.nextBoolean()){
+        //continue playing until 3 skulls rolled, or player 'chooses' to stop rolling
+        while(values[5]<3 && diceToRoll){
             //find goal
             for(int i=0; i<values.length-1; i++){
                 if(values[i]>max){
@@ -152,41 +159,48 @@ public class Player {
 
             logger.trace("GOAL: " + goal);
 
-            Arrays.fill(values, 0);
-
-            comboReroll(mydice, goal);
+            diceToRoll = comboReroll(mydice, goal);
 
             logValues(mydice);
+
+            clear(values, card);
 
             updateValues(mydice);
 
         }
+
+        return values[5]<3;
 
     }
 
-    public boolean seaBattleStrategy(Dice[] mydice, int goal){
+    public boolean seaBattleStrategy(Dice[] mydice, Card card){
+        int goal = card.getSwords();
         logger.trace("GOAL: " + goal + " swords in sea battle");
 
-        //continue playing until 3 skulls rolled
+        //continue rolling until swords goal is reached or 3 skulls are rolled
+        //maximum swords needed is 4, turn ends if 3 skulls -- there will always be at least 2 dice to roll while turn continues
         while(values[5]<3 && values[4]<goal){
 
-            Arrays.fill(values, 0);
-
+            //reroll with combo strategy - goal is to get swords
             comboReroll(mydice, Faces.Sword);
-
+            //log and update dice values
             logValues(mydice);
 
+            //'clear' values from previous roll
+            clear(values, card);
+            //update values with die values from new roll
             updateValues(mydice);
 
         }
-
-        return values[4] >= goal;
+        //was player successful in getting the number of swords required?
+        return values[4] >= goal && values[5]<3;
 
     }
 
     public void updateValues(Dice[] mydice){
         for (Dice die : mydice) {
             //Monkey, Parrot, Gold, Diamond, Saber, Skull;
+            //track number of dice with each face value
             for(Faces f : Faces.values()){
                 if(die.val == f){
                     values[f.ordinal()]++;
@@ -195,16 +209,31 @@ public class Player {
         }
     }
 
-    public static void comboReroll(Dice[] mydice, Faces goal){
-        for(Dice die: mydice) {
-            if (die.val != goal && die.val != Faces.Skull) {
-                die.val = die.roll();
+    public boolean comboReroll(Dice[] mydice, Faces goal){
+
+        //check there are at least 2 dice to re-roll
+        int roll=0;
+        for(int i=0; i<Faces.values().length; i++){
+            if(i!=goal.ordinal() && i!=5){
+                roll += values[i];
             }
         }
+        //if there are enough dice to re-roll, roll dice that are not involved in desired combo
+        if(roll>1){
+            for(Dice die: mydice) {
+                if (die.val != goal && die.val != Faces.Skull) {
+                    die.val = die.roll();
+                }
+            }
+            return true;
+        }
+
+        return false;
+
     }
 
 
-    public static void randReroll(Dice[] mydice,int roll_num){
+    public void randReroll(Dice[] mydice,int roll_num){
         Random rand = new Random();
         int[] num = new int[roll_num];
         logger.trace("Re-roll: ");
@@ -228,11 +257,19 @@ public class Player {
     }
 
     public void logValues(Dice[] mydice){
-        String dicevalues="";
+        StringBuilder dicevalues= new StringBuilder();
         //log dice values
         for (Dice die : mydice) {
-            dicevalues+=(die.val + "\t");
+            dicevalues.append(die.val).append("\t");
         }
-        logger.trace(dicevalues);
+        logger.trace(dicevalues.toString());
+    }
+
+    public void clear(int[] values, Card card){
+        Arrays.fill(values, 0);
+        //add skulls from card drawn
+        if(card.face.equals(CardFace.Skull)){
+            values[5] += card.getSkulls();
+        }
     }
 }//end of class
