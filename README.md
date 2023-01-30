@@ -51,4 +51,5 @@ Remark: **We are assuming here you are using a _real_ shell (e.g., anything but 
 | x   | F12 | Introduce sea battle card | S | 01/25/23 | |
 | x   | F13 | Give option of command line arguments for trace mode, number of games and player strategy | S | 01/24/23 | 01/25/23 |
 | x   | F14 | Introduce monkey business card | S | 01/25/23 | |
+| x   | F15 | Introduce gold, diamond, skull, and sea battle cards | S | 01/28/23 | |
 
